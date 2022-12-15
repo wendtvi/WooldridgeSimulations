@@ -1,33 +1,73 @@
-#install.packages("NTS")
-library(NTS)
 
-G_suporte=c(1,0)
-T_suporte=c(1,0)
-n1=100
-n0=100
-TT=20
-epsolon_tratados=rnorm(n1,0,1)
-epsolon_controle=rnorm(n2,1,1)
-beta0=rep(n1,0)
-beta1=rep(n1,0.3)
-gama0=rep(n1,0.4)
-gama1=rep(n1,0.1)
+##########################################################
+#####################CENÁRIO SIMULAÇÃO####################
+##########################################################
+n1=250
+n0=250
+TT=6
 
-#Modelo de diferenças em diferença para cada cohort
-X_estrela_11=beta0+beta1*g+gama0*t+gama1*g*t+epsolon_tratados
-X_estrela_10=beta0+beta1*g+epsolon_tratados
-X_estrela_01=beta0+gama0*t+epsolon_controle
-X_estrela_00=beta0+epsolon_controle
-
-#Gerando séries latentes para grupo de controle e tratados
-for (i in 1:TT){
-  
+#Gerando covariável
+Z_cov_mean=vector()
+Z_cov=matrix(NA,ncol=TT,nrow=n1)
+for (k in 1:nrow(Z_cov)){
+  Z_cov[k,]=rexp(TT,1)
+  Z_cov_mean[k]=mean(Z_cov[k,])
 }
 
-#Tranformação não linear exp()
-X_11=exp(X_estrela_11)
-X_10=exp(X_estrela_10)
-X_01=exp(X_estrela_01)
-X_00=exp(X_estrela_00)
+#Variável de tratamento
+V=rlogis(n1,0,1)
+D=vector()
+D=rep(-0.5,n1)+(Z_cov_mean-1)+V>0
+sum(D)/length(D)
 
-nnet()
+#Termos de erro U
+U0=rlogis(n1,0,1)
+U1=rlogis(n1,0,1)
+
+#Modelo de diferenças em diferença para cada cohort (01 primero é grupo e segundo é tempo: neste caso é grupo de controle no período pós trat)
+f5=rep(1,n1)
+f6=rep(1,n1)
+X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+U0 #para t=1,...,TT
+X_estrela_1_ntratados=rep(0.5,n0)+(Z_cov_mean-1)+U1 #nao tratados após tratamento
+X_estrela_1_t4=rep(0.5,n1)+(Z_cov_mean-1)-2*D+0.2*f5+0.3*f6+U1 #para t=4
+X_estrela_1_t5=rep(0.5,n1)+(Z_cov_mean-1)-2*D+0.2*f5+U1 #para t=5
+X_estrela_1_t6=rep(0.5,n1)+(Z_cov_mean-1)-2*D+0.2*f5+0.3*f6+U1 #para t=6
+  
+#Gerando matriz de dados latentes.
+matriz_X_estrela=matrix(NA, ncol = TT+1,nrow = n1+n0)
+matriz_X_estrela[,TT+1]=t(c(rep(1,n1),rep(0,n0)))
+for (k in 1:ncol(matriz_X_estrela)){
+  matriz_X_estrela[,k]=t(c(X_estrela_0,X_estrela_0))
+  if (k==4)matriz_X_estrela[,k]=t(c(X_estrela_1_t4,X_estrela_1_ntratados))
+  if (k==5)matriz_X_estrela[,k]=t(c(X_estrela_1_t5,X_estrela_1_ntratados))
+  if (k==6)matriz_X_estrela[,k]=t(c(X_estrela_1_t6,X_estrela_1_ntratados))
+}
+
+#Transformação W() apenas replica X estrela
+#Tranformação não linear S() exp()
+matriz_Y=matrix(NA, ncol = TT+1,nrow = n1+n0)
+for (k in 1:ncol(matriz_Y)){
+  for (i in 1:nrow(matriz_Y)){
+    matriz_Y[i,k]=exp(matriz_X_estrela[i,k])
+  }
+}
+
+
+##########################################################
+#####################ESTIMADORES##########################
+##########################################################
+
+
+
+
+
+
+
+
+
+
+
+##########################################################
+#####################RESULTADOS###########################
+##########################################################
+tau=
