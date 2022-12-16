@@ -78,7 +78,7 @@ tau_4_hat=mean(log(matriz_Y[matriz_Y[,TT+1]==1,q]))-mean(log(F_inver_F_Y10[F_inv
 tau_5_hat=mean(log(matriz_Y[matriz_Y[,TT+1]==1,q+1]))-mean(log(F_inver_F_Y10[F_inver_F_Y10!=Inf]))
 tau_6_hat=mean(log(matriz_Y[matriz_Y[,TT+1]==1,q+2]))-mean(log(F_inver_F_Y10[F_inver_F_Y10!=Inf]))
 
-matriz_resultados=matrix(NA, ncol = TT-q+1,nrow = N)
+matriz_resultados=matrix(NA, ncol = (TT-q+1)*2,nrow = N)
 matriz_resultados[p,1]=tau_4
 matriz_resultados[p,2]=tau_4_hat
 matriz_resultados[p,3]=tau_5
