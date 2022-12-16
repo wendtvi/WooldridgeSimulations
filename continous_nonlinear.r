@@ -4,8 +4,8 @@ mc_function=function(N){
 ##########################################################
 #####################CENÁRIO SIMULAÇÃO####################
 ##########################################################
-      n1=250
-      n0=250
+      n1=500
+      n0=500
       TT=6
       q=4
       
@@ -32,7 +32,7 @@ mc_function=function(N){
       f6=rep(1,n1)
       X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+U0 #para t=1,...,TT
       X_estrela_1_ntratados=rep(0.5,n0)+(Z_cov_mean-1)+U1 #nao tratados após tratamento
-      X_estrela_1_t4=rep(0.5,n1)+(Z_cov_mean-1)-2*D+0.2*f5+0.3*f6+U1 #para t=4
+      X_estrela_1_t4=rep(0.5,n1)+(Z_cov_mean-1)-2*D+U1 #para t=4
       X_estrela_1_t5=rep(0.5,n1)+(Z_cov_mean-1)-2*D+0.2*f5+U1 #para t=5
       X_estrela_1_t6=rep(0.5,n1)+(Z_cov_mean-1)-2*D+0.2*f5+0.3*f6+U1 #para t=6
         
