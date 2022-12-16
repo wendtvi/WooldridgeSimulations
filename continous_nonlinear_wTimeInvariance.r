@@ -23,8 +23,8 @@ mc_function=function(N){
       sum(D)/length(D) #Incidência de tratamento na população
       
       #Termos de erro U
-      U0=rlogis(n1,0,1)
-      U1=rlogis(n1,0,1)
+      U0=rnorm(n1,0,1)
+      U1=rnorm(n1,0,1)
       
       #Modelo de diferenças em diferença para cada cohort (01 primero é grupo e segundo é tempo: neste caso é grupo de controle no período pós trat)
       f5=rep(1,n1)
