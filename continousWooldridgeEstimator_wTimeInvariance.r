@@ -84,9 +84,9 @@ mc_function=function(N){
     tau_5=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+1])
     tau_6=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+2])
     
-    tau_4_hat=Ybar_11_t4-(Ybar_10_t3*(Ybar_01_t4/Ybar_00_t3))
-    tau_5_hat=Ybar_11_t5-(Ybar_10_t3*(Ybar_01_t5/Ybar_00_t3))
-    tau_6_hat=Ybar_11_t6-(Ybar_10_t3*(Ybar_01_t6/Ybar_00_t3))
+    tau_4_hat=log(Ybar_11_t4)-log(Ybar_10_t3*(Ybar_01_t4/Ybar_00_t3))
+    tau_5_hat=log(Ybar_11_t5)-log(Ybar_10_t3*(Ybar_01_t5/Ybar_00_t3))
+    tau_6_hat=log(Ybar_11_t6)-log(Ybar_10_t3*(Ybar_01_t6/Ybar_00_t3))
     
     matriz_resultados[p,1]=tau_4
     matriz_resultados[p,2]=tau_4_hat
