@@ -1,13 +1,14 @@
-mc_function=function(N){
-  matriz_resultados=matrix(NA, ncol = (TT-q+1)*2,nrow = N)
-    for(p in 1:N){
-##########################################################
-#####################CENÁRIO SIMULAÇÃO####################
-##########################################################
+mc_function=function(N){    
       n1=500
       TT=6
       q=4
       
+    matriz_resultados=matrix(NA, ncol = (TT-q+1)*2,nrow = N)
+    for(p in 1:N){
+##########################################################
+#####################CENÁRIO SIMULAÇÃO####################
+##########################################################
+ 
       #Gerando covariável
       Z_cov_mean=vector()
       Z_cov=matrix(NA,ncol=TT,nrow=n1)
