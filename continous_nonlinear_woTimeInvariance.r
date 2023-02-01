@@ -27,7 +27,7 @@ mc_function=function(N){
     U0=rnorm(n1,0,1.81)
     U1=rnorm(n1,0,1.81)
     epsolon=rnorm(n1,0,1)
-
+    
     
     #Modelo de diferenças em diferença para cada cohort (01 primero é grupo e segundo é tempo: neste caso é grupo de controle no período pós trat)
     f5=rep(1,n1)
@@ -71,12 +71,12 @@ mc_function=function(N){
     ##########################################################
     Y10= matriz_Y[matriz_Y[,TT+1]==1,(q-1)] #variável resposta observada para grupo dos tratados no período pré tratamento t=3
     #Suponho que sei que variável latente segue distribuição logistica com parâmetros 0,1
-    F_Y10=plnorm((Y10),meanlog =exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+(1.81)^2/2),
-                 sdlog =sqrt((exp(1.81^2)-1)*exp(2*exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+(1.81)^2/2)+(1.81)^2)))
+    F_Y10=plnorm((Y10),meanlog =exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+((1.81)^2+1)/2),
+                 sdlog =sqrt((exp(1.81^2+1)-1)*exp(2*exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+((1.81)^2+1)/2)+((1.81)^2+1))))
     F_Y10[F_Y10==1]=0.9999999999
     #hist(F_Y10)
-    F_inver_F_Y10=qlnorm(F_Y10,meanlog =exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+(1.81)^2/2),
-                         sdlog = sqrt((exp(1.81^2)-1)*exp(2*exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+(1.81)^2/2)+(1.81)^2)))
+    F_inver_F_Y10=qlnorm(F_Y10,meanlog =exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+((1.81)^2+1)/2),
+                         sdlog =sqrt((exp(1.81^2+1)-1)*exp(2*exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+((1.81)^2+1)/2)+((1.81)^2+1))))
     
     
     ##########################################################
