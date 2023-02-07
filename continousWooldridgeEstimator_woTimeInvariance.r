@@ -49,10 +49,12 @@ mc_function=function(N){
     matriz_X_estrela=matrix(NA, ncol = TT+1,nrow = n1)
     matriz_X_estrela[,TT+1]=t(D)
     for (k in 1:ncol(matriz_X_estrela)-1){
-      matriz_X_estrela[,k]=matriz_estado_naotratamento[,k]
-      if (k==4)matriz_X_estrela[,k]=t(c(X_estrela_1_t4))
-      if (k==5)matriz_X_estrela[,k]=t(c(X_estrela_1_t5))
-      if (k==6)matriz_X_estrela[,k]=t(c(X_estrela_1_t6))
+      matriz_X_estrela[,k]=matriz_estado_naotratamento[,k]      
+      for (i in 1:nrow(matriz_X_estrela)){
+        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=X_estrela_1_t4[i]
+        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=X_estrela_1_t5[i]
+        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=X_estrela_1_t6[i]
+      }
     }
     
     #Transformação W() apenas replica X estrela
