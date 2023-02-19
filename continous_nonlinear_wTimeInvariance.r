@@ -31,17 +31,17 @@ mc_function=function(N){
     #Modelo de diferenças em diferença para cada cohort (01 primero é grupo e segundo é tempo: neste caso é grupo de controle no período pós trat)
     f5=rep(1,n1)
     f6=rep(1,n1)
-    X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1) #para t=1,...,TT caso não houvesse tratamento
+    X_estrela_0=log(exp((Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1))) #para t=1,...,TT caso não houvesse tratamento
     X_estrela_1_ntratados=X_estrela_0 #se houvesse tratmento, mas var observada antes do tratamento
-    X_estrela_1_t4=(Z_cov_mean-1)*3/4-2*D+rnorm(n1,0,1) #para t=4
-    X_estrela_1_t5=(Z_cov_mean-1)*3/4-2*D+0.2*f5*D+rnorm(n1,0,1) #para t=5
-    X_estrela_1_t6=(Z_cov_mean-1)*3/4-2*D+0.2*f5*D+0.3*f6*D+rnorm(n1,0,1) #para t=6
+    X_estrela_1_t4=log(exp((Z_cov_mean-1)*3/4-2*D+rnorm(n1,0,1))) #para t=4
+    X_estrela_1_t5=log(exp((Z_cov_mean-1)*3/4-2*D+0.2*f5*D+rnorm(n1,0,1))) #para t=5
+    X_estrela_1_t6=log(exp((Z_cov_mean-1)*3/4-2*D+0.2*f5*D+0.3*f6*D+rnorm(n1,0,1))) #para t=6
     
     matriz_estado_naotratamento=matrix(NA,nrow = length(D),ncol = TT+1)
     matriz_estado_naotratamento[,TT+1]=t(D)
     for (k in 1:TT){
-      if (k<q) X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1)
-      if (k>=q) X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1)
+      if (k<q) X_estrela_0=log(exp((Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1)))
+      if (k>=q) X_estrela_0=log(exp((Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1)))
       matriz_estado_naotratamento[,k]=t(X_estrela_0)
     }
     
@@ -73,7 +73,7 @@ mc_function=function(N){
     matriz_Y[,ncol(matriz_X)]=matriz_X[,TT+1]
     for (k in 1:ncol(matriz_Y)-1){
       for (i in 1:nrow(matriz_Y)){
-        matriz_Y[i,k]=rpois(1,lambda = matriz_X[matriz_X[,TT+1]==matriz_Y[k,TT+1],k])
+        matriz_Y[i,k]=rbinom(1,1,prob = matriz_X[matriz_X[,TT+1]==matriz_Y[k,TT+1],k])
       }
     }
     #hist(matriz_Y[matriz_Y[,TT+1]==0,q-1],breaks = 200,main="Histograma grupo de controle em t=3 (período pré tratamento)")
@@ -84,30 +84,30 @@ mc_function=function(N){
     ##########################################################
     Y10= matriz_Y[matriz_Y[,TT+1]==1,(q-1)] #variável resposta observada para grupo dos tratados no período pré tratamento t=3
     #Suponho que sei que variável latente segue distribuição logistica com parâmetros 0,1
-    F_Y10=ppois((Y10),lambda = matriz_X[matriz_X[,TT+1]==0,(q-1)])
+    F_Y10=pbinom((Y10),1,prob = matriz_X[matriz_X[,TT+1]==0,(q-1)])
     F_Y10[F_Y10==1]=0.9999999999
     #hist(F_Y10)
-    F_inver_F_Y10=qpois(F_Y10,lambda =  matriz_X[matriz_X[,TT+1]==0,(q)])
+    F_inver_F_Y10=qbinom(F_Y10,1,prob =  matriz_X[matriz_X[,TT+1]==0,(q)])
     
     
     ##########################################################
     #####################RESULTADOS###########################
     ##########################################################
-    tau_4=mean(matriz_Y[matriz_Y[,TT+1]==1,q]/n)-mean(matriz_Y[matriz_Y[,TT+1]==0,q]/n) #resultados populacionais
+    tau_4=log(exp(mean(matriz_Y[matriz_Y[,TT+1]==1,q])))-log(exp(mean(matriz_Y[matriz_Y[,TT+1]==0,q]))) #resultados populacionais
     tau_5=mean(matriz_Y[matriz_Y[,TT+1]==1,q+1]/n)-mean(matriz_Y[matriz_Y[,TT+1]==0,q+1]/n)
     tau_6=mean(matriz_Y[matriz_Y[,TT+1]==1,q+2]/n)-mean(matriz_Y[matriz_Y[,TT+1]==0,q+2]/n)
     
-    tau_4_hat=(mean((matriz_Y[matriz_Y[,TT+1]==1,q]/n))-mean(F_inver_F_Y10/n))
-    tau_5_hat=(mean((matriz_Y[matriz_Y[,TT+1]==1,q+1]/n))-mean(F_inver_F_Y10/n))
-    tau_6_hat=(mean((matriz_Y[matriz_Y[,TT+1]==1,q+2]/n))-mean(F_inver_F_Y10/n))
+    tau_4_hat=(mean((matriz_Y[matriz_Y[,TT+1]==1,q])))-((mean(F_inver_F_Y10)))
+    tau_5_hat=(mean((matriz_Y[matriz_Y[,TT+1]==1,q+1]))-mean(F_inver_F_Y10))
+    tau_6_hat=(mean((matriz_Y[matriz_Y[,TT+1]==1,q+2]))-mean(F_inver_F_Y10))
     
-    gamma_4=(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q])-(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q])
-    gamma_5=(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1])-(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1])
+    gamma_4=(matriz_X[matriz_X_estrela[,TT+1]==1,q])-(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1])
+    gamma_5=(matriz_X[matriz_X_estrela[,TT+1]==1,q+1])-(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1])
     gamma_6=(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2])-(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2])
     
-    gamma_4_hat=log(tau_4_hat+mean(F_inver_F_Y10/n))-log(mean(F_inver_F_Y10/n))
-    gamma_5_hat=log(tau_5_hat+mean(F_inver_F_Y10/n))-log(mean(F_inver_F_Y10/n))
-    gamma_6_hat=log(tau_6_hat+mean(F_inver_F_Y10/n))-log(mean(F_inver_F_Y10/n))
+    gamma_4_hat=log(mean((matriz_Y[matriz_Y[,TT+1]==1,q]/n)))-log((mean(F_inver_F_Y10/n)))
+    gamma_5_hat=log(exp(mean(log(exp(matriz_Y[matriz_Y[,TT+1]==1,q+1]/n))))/exp(mean(log(exp(F_inver_F_Y10/n)))))
+    gamma_6_hat=log(exp(mean(log(exp(matriz_Y[matriz_Y[,TT+1]==1,q+2]/n))))/exp(mean(log(exp(F_inver_F_Y10/n)))))
     
     matriz_resultados[p,1]=tau_4
     matriz_resultados[p,2]=tau_4_hat
