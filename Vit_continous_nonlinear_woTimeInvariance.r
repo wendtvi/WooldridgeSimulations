@@ -2,8 +2,8 @@ mc_function=function(N){
   n1=500
   TT=6
   q=4
-  matriz_resultados=matrix(NA, ncol = (TT-q+1)*2,nrow = N)
   
+  matriz_resultados=matrix(NA, ncol = 2*((TT-q+1)*2),nrow = N)
   for(p in 1:N){
     ##########################################################
     #####################CENÁRIO SIMULAÇÃO####################
@@ -28,11 +28,10 @@ mc_function=function(N){
     U1=rnorm(n1,0,1.81)
     epsolon=rnorm(n1,0,1)
     
-    
     #Modelo de diferenças em diferença para cada cohort (01 primero é grupo e segundo é tempo: neste caso é grupo de controle no período pós trat)
     f5=rep(1,n1)
     f6=rep(1,n1)
-    X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+(epsolon+rnorm(n1,0,1.81)) #para t=1,...,TT caso não houvesse tratamento
+    X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81) #para t=1,...,TT caso não houvesse tratamento
     X_estrela_1_ntratados=X_estrela_0 #se houvesse tratamento, mas var observada antes do tratamento
     X_estrela_1_t4=(Z_cov_mean-1)*3/4-2*D+(epsolon+rnorm(n1,0,1.81)) #para t=4
     X_estrela_1_t5=(Z_cov_mean-1)*3/4-2*D+0.2*f5*D+(epsolon+rnorm(n1,0,1.81)) #para t=5
@@ -58,6 +57,15 @@ mc_function=function(N){
       }
     }
     
+    #Transformação W() apenas replica X estrela matriz de não tratamento
+    #Tranformação não linear S() exp()
+    matriz_Y_naotratamento=matriz_estado_naotratamento
+    for (k in 1:ncol(matriz_Y_naotratamento)-1){
+      for (i in 1:nrow(matriz_Y_naotratamento)){
+        matriz_Y_naotratamento[i,k]=exp(matriz_Y_naotratamento[i,k])
+      }
+    }
+    
     #Transformação W() apenas replica X estrela
     #Tranformação não linear S() exp()
     matriz_Y=matriz_X_estrela
@@ -71,15 +79,15 @@ mc_function=function(N){
     ##########################################################
     #####################ESTIMADORES##########################
     ##########################################################
-    Y10= matriz_Y[matriz_Y[,TT+1]==1,(q-1)] #variável resposta observada para grupo dos tratados no período pré tratamento t=3
-    #Suponho que sei que variável latente segue distribuição logistica com parâmetros 0,1
-    F_Y10=plnorm((Y10),meanlog =exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+((1.81)^2+1)/2),
-                 sdlog =sqrt((exp(1.81^2+1)-1)*exp(2*exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+((1.81)^2+1)/2)+((1.81)^2+1))))
-    F_Y10[F_Y10==1]=0.9999999999
-    #hist(F_Y10)
-    F_inver_F_Y10=qlnorm(F_Y10,meanlog =exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+((1.81)^2+1)/2),
-                         sdlog =sqrt((exp(1.81^2+1)-1)*exp(2*exp(mean((Z_cov_mean-1)/2-2*1+(Z_cov_mean-1)*1/4)+((1.81)^2+1)/2)+((1.81)^2+1))))
+    Ybar_11_t4=mean(matriz_Y[matriz_Y[,TT+1]==1,(q)])
+    Ybar_11_t5=mean(matriz_Y[matriz_Y[,TT+1]==1,(q+1)])
+    Ybar_11_t6=mean(matriz_Y[matriz_Y[,TT+1]==1,(q+2)])
     
+    Ybar_10_t3=mean(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])
+    Ybar_00_t3=mean(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])
+    Ybar_01_t4=mean(matriz_Y[matriz_Y[,TT+1]==0,(q)])
+    Ybar_01_t5=mean(matriz_Y[matriz_Y[,TT+1]==0,(q+1)])
+    Ybar_01_t6=mean(matriz_Y[matriz_Y[,TT+1]==0,(q+2)])
     
     ##########################################################
     #####################RESULTADOS###########################
@@ -88,9 +96,18 @@ mc_function=function(N){
     tau_5=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+1])
     tau_6=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+2])
     
-    tau_4_hat=log(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,q])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))
-    tau_5_hat=log(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,q+1])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q+1)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))
-    tau_6_hat=log(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,q+2])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q+2)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))
+    gamma_4=mean(matriz_Y[matriz_Y[,TT+1]==1,q])-mean(matriz_Y_naotratamento[matriz_Y_naotratamento[,TT+1]==1,q]) #resultados populacionais
+    gamma_5=mean(matriz_Y[matriz_Y[,TT+1]==1,q+1])-mean(matriz_Y_naotratamento[matriz_Y_naotratamento[,TT+1]==1,q+1])
+    gamma_6=mean(matriz_Y[matriz_Y[,TT+1]==1,q+2])-mean(matriz_Y_naotratamento[matriz_Y_naotratamento[,TT+1]==1,q+2])
+    
+    tau_4_hat=log(Ybar_11_t4)-log(Ybar_10_t3*(Ybar_01_t4/Ybar_00_t3))
+    tau_5_hat=log(Ybar_11_t5)-log(Ybar_10_t3*(Ybar_01_t5/Ybar_00_t3))
+    tau_6_hat=log(Ybar_11_t6)-log(Ybar_10_t3*(Ybar_01_t6/Ybar_00_t3))
+    
+    
+    gamma_4_hat=(Ybar_11_t4)-(Ybar_10_t3*(Ybar_01_t4/Ybar_00_t3))
+    gamma_5_hat=(Ybar_11_t5)-(Ybar_10_t3*(Ybar_01_t5/Ybar_00_t3))
+    gamma_6_hat=(Ybar_11_t6)-(Ybar_10_t3*(Ybar_01_t6/Ybar_00_t3))
     
     
     matriz_resultados[p,1]=tau_4
@@ -99,6 +116,12 @@ mc_function=function(N){
     matriz_resultados[p,4]=tau_5_hat
     matriz_resultados[p,5]=tau_6
     matriz_resultados[p,6]=tau_6_hat
+    matriz_resultados[p,7]=gamma_4
+    matriz_resultados[p,8]=gamma_4_hat
+    matriz_resultados[p,9]=gamma_5
+    matriz_resultados[p,10]=gamma_5_hat
+    matriz_resultados[p,11]=gamma_6
+    matriz_resultados[p,12]=gamma_6_hat
     
   }
   return(matriz_resultados)
