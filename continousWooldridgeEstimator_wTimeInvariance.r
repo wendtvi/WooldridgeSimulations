@@ -3,12 +3,12 @@ mc_function=function(N){
   TT=6
   q=4
   
-  matriz_resultados=matrix(NA, ncol = (TT-q+1)*2,nrow = N)
+  matriz_resultados=matrix(NA, ncol = 2*((TT-q+1)*2),nrow = N)
   for(p in 1:N){
     ##########################################################
     #####################CENÁRIO SIMULAÇÃO####################
     ##########################################################
-
+    
     #Gerando covariável
     Z_cov_mean=vector()
     Z_cov=matrix(NA,ncol=TT,nrow=n1)
@@ -39,9 +39,8 @@ mc_function=function(N){
     matriz_estado_naotratamento=matrix(NA,nrow = n1,ncol = TT+1)
     matriz_estado_naotratamento[,TT+1]=t(D)
     for (k in 1:TT){
-      if (k<q) X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)
-      if (k>=q) X_estrela_0=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)
-      matriz_estado_naotratamento[,k]=t(X_estrela_0)
+      if (k<q) matriz_estado_naotratamento[,k]=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)
+      if (k>=q) matriz_estado_naotratamento[,k]=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)
     }
     
     #Gerando matriz de dados latentes.
@@ -56,6 +55,15 @@ mc_function=function(N){
       }
     }
     
+    #Transformação W() apenas replica X estrela matriz de não tratamento
+    #Tranformação não linear S() exp()
+    matriz_Y_naotratamento=matriz_estado_naotratamento
+    for (k in 1:ncol(matriz_Y_naotratamento)-1){
+      for (i in 1:nrow(matriz_Y_naotratamento)){
+        matriz_Y_naotratamento[i,k]=exp(matriz_Y_naotratamento[i,k])
+      }
+    }
+    
     #Transformação W() apenas replica X estrela
     #Tranformação não linear S() exp()
     matriz_Y=matriz_X_estrela
@@ -64,6 +72,8 @@ mc_function=function(N){
         matriz_Y[i,k]=exp(matriz_X_estrela[i,k])
       }
     }
+    #hist(matriz_Y[matriz_Y[,TT+1]==0,q-1],breaks = 200,main="Histograma grupo de controle em t=3 (período pré tratamento)")
+    
     #hist(matriz_Y[matriz_Y[,TT+1]==0,q-1],breaks = 200,main="Histograma grupo de controle em t=3 (período pré tratamento)")
     
     ##########################################################
@@ -86,9 +96,19 @@ mc_function=function(N){
     tau_5=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+1])
     tau_6=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+2])
     
+    
+    gamma_4=mean(matriz_Y[matriz_Y[,TT+1]==1,q])-mean(matriz_Y_naotratamento[matriz_Y_naotratamento[,TT+1]==1,q]) #resultados populacionais
+    gamma_5=mean(matriz_Y[matriz_Y[,TT+1]==1,q+1])-mean(matriz_Y_naotratamento[matriz_Y_naotratamento[,TT+1]==1,q+1])
+    gamma_6=mean(matriz_Y[matriz_Y[,TT+1]==1,q+2])-mean(matriz_Y_naotratamento[matriz_Y_naotratamento[,TT+1]==1,q+2])
+    
     tau_4_hat=log(Ybar_11_t4)-log(Ybar_10_t3*(Ybar_01_t4/Ybar_00_t3))
     tau_5_hat=log(Ybar_11_t5)-log(Ybar_10_t3*(Ybar_01_t5/Ybar_00_t3))
     tau_6_hat=log(Ybar_11_t6)-log(Ybar_10_t3*(Ybar_01_t6/Ybar_00_t3))
+    
+    
+    gamma_4_hat=(Ybar_11_t4)-(Ybar_10_t3*(Ybar_01_t4/Ybar_00_t3))
+    gamma_5_hat=(Ybar_11_t5)-(Ybar_10_t3*(Ybar_01_t5/Ybar_00_t3))
+    gamma_6_hat=(Ybar_11_t6)-(Ybar_10_t3*(Ybar_01_t6/Ybar_00_t3))
     
     matriz_resultados[p,1]=tau_4
     matriz_resultados[p,2]=tau_4_hat
@@ -96,6 +116,12 @@ mc_function=function(N){
     matriz_resultados[p,4]=tau_5_hat
     matriz_resultados[p,5]=tau_6
     matriz_resultados[p,6]=tau_6_hat
+    matriz_resultados[p,7]=gamma_4
+    matriz_resultados[p,8]=gamma_4_hat
+    matriz_resultados[p,9]=gamma_5
+    matriz_resultados[p,10]=gamma_5_hat
+    matriz_resultados[p,11]=gamma_6
+    matriz_resultados[p,12]=gamma_6_hat
     
   }
   return(matriz_resultados)
