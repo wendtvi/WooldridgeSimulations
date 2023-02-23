@@ -38,6 +38,7 @@ mc_function=function(N){
     
     matriz_estado_naotratamento=matrix(NA,nrow = n1,ncol = TT+1)
     matriz_estado_naotratamento[,TT+1]=t(D)
+    matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==TRUE,TT+1]=1
     for (k in 1:TT){
       if (k<q) matriz_estado_naotratamento[,k]=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)
       if (k>=q) matriz_estado_naotratamento[,k]=(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)
@@ -91,9 +92,10 @@ mc_function=function(N){
     tau_6_hat=log(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,q+2])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q+2)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))
     
     
-    gamma_4_hat=exp(tau_4_hat+exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))-exp(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))
-    gamma_5_hat=exp(tau_5_hat+exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q+1)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))-exp(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q+1)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))
-    gamma_6_hat=exp(tau_6_hat+exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q+2)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))-exp(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q+2)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))
+    gamma_4_hat=mean(matriz_Y[matriz_Y[,TT+1]==1,q])-log(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,(q-1)])))*(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q)])))/exp(mean(log(matriz_Y[matriz_Y[,TT+1]==0,(q-1)])))))
+    gamma_5_hat=mean(matriz_Y[matriz_Y[,TT+1]==1,q+1])-(mean(matriz_Y[matriz_Y[,TT+1]==0,q+1])-mean(matriz_Y[matriz_Y[,TT+1]==0,q-1])+mean(matriz_Y[matriz_Y[,TT+1]==1,q-1]))
+    gamma_6_hat=mean(matriz_Y[matriz_Y[,TT+1]==1,q+2])-(mean(matriz_Y[matriz_Y[,TT+1]==0,q+2])-mean(matriz_Y[matriz_Y[,TT+1]==0,q-1])+mean(matriz_Y[matriz_Y[,TT+1]==1,q-1]))
+    
     
     matriz_resultados[p,1]=tau_4
     matriz_resultados[p,2]=tau_4_hat
