@@ -2,7 +2,7 @@ mc_function=function(N){
   n1=500
   TT=6
   q=4
-  matriz_resultados=matrix(NA, ncol = 2*((TT-q+1)*2),nrow = N)
+  matriz_resultados=matrix(NA, ncol = 3*((TT-q+1)*2),nrow = N)
   
   for(p in 1:N){
     ##########################################################
@@ -99,6 +99,14 @@ mc_function=function(N){
     gamma5_hat=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1]+var(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1])/2))-mean(F_inver_F_Y10)
     gamma6_hat=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2]+var(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2])/2))-mean(F_inver_F_Y10)
     
+    kappa_4=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]))
+    kappa_5=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]))
+    kappa_6=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]))
+    
+    
+    kappa4_hat=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q]))-mean(F_inver_F_Y10)
+    kappa5_hat=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1]))-mean(F_inver_F_Y10)
+    kappa6_hat=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2]))-mean(F_inver_F_Y10)
     
     matriz_resultados[p,1]=tau_4
     matriz_resultados[p,2]=tau_4_hat
@@ -112,6 +120,12 @@ mc_function=function(N){
     matriz_resultados[p,10]=gamma5_hat
     matriz_resultados[p,11]=gamma_6
     matriz_resultados[p,12]=gamma6_hat
+    matriz_resultados[p,13]=kappa_4
+    matriz_resultados[p,14]=kappa4_hat
+    matriz_resultados[p,15]=kappa_5
+    matriz_resultados[p,16]=kappa5_hat
+    matriz_resultados[p,17]=kappa_6
+    matriz_resultados[p,18]=kappa6_hat
     
   }
   return(matriz_resultados)
