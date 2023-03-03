@@ -2,7 +2,7 @@ mc_function=function(N){
   n1=500
   TT=6
   q=4
-  matriz_resultados=matrix(NA, ncol = 2*((TT-q+1)*2),nrow = N)
+  matriz_resultados=matrix(NA, ncol = 3*((TT-q+1)*2),nrow = N)
   
   for(p in 1:N){
     ##########################################################
@@ -93,7 +93,7 @@ mc_function=function(N){
         if(matriz_Y[i,TT+1]==1 && k==q)matriz_Y[i,k]=rbinom(1,1,exp(mean(-(Z_cov_mean-1)*D/4-0.02*100+0.00)))
         if(matriz_Y[i,TT+1]==1 && k==q+1)matriz_Y[i,k]=rbinom(1,1,exp(mean(-(Z_cov_mean-1)*D/4-0.02*100+0.20)))
         if(matriz_Y[i,TT+1]==1 && k==q+2)matriz_Y[i,k]=rbinom(1,1,exp(mean(-(Z_cov_mean-1)*D/4-0.02*100+0.50)))
-        }
+      }
     }
     
     #hist(matriz_Y[matriz_Y[,TT+1]==0,q-1],breaks = 200,main="Histograma grupo de controle em t=3 (período pré tratamento)")
@@ -102,45 +102,43 @@ mc_function=function(N){
     ##########################################################
     #####################ESTIMADORES##########################
     ##########################################################
-    Y10= matriz_Y[matriz_Y[,TT+1]==1,(q-1)] #variável resposta observada para grupo dos tratados no período pré tratamento t=3
+    Y10= sum(matriz_Y[matriz_Y[,TT+1]==1,(q-1)]) #variável resposta observada para grupo dos tratados no período pré tratamento t=3
     #Suponho que sei que variável latente segue distribuição logistica com parâmetros 0,1
-    F_Y10=pbinom((Y10),prob = mean(matriz_Y[matriz_Y[,TT+1]==0,q-1]),size = 1)
-                 
+    F_Y10=ppois((Y10),lambda = mean(matriz_Y[matriz_Y[,TT+1]==0,q-1])*length(matriz_Y[matriz_Y[,TT+1]==0,q-1]))
+    
     F_Y10[F_Y10==1]=0.9999999999
     #hist(F_Y10)
-    F_inver_F_Y10_t4=qbinom(F_Y10,prob=mean(matriz_Y[matriz_Y[,TT+1]==0,q]),size = 1)
-    F_inver_F_Y10_t5=qbinom(F_Y10,prob=mean(matriz_Y[matriz_Y[,TT+1]==0,q+1]),size = 1)
-    F_inver_F_Y10_t6=qbinom(F_Y10,prob=mean(matriz_Y[matriz_Y[,TT+1]==0,q+2]),size = 1)
+    F_inver_F_Y10_t4=qpois(F_Y10,lambda = mean(matriz_Y[matriz_Y[,TT+1]==0,q])* length(matriz_Y[matriz_Y[,TT+1]==0,q]))
+    F_inver_F_Y10_t5=qpois(F_Y10,lambda = mean(matriz_Y[matriz_Y[,TT+1]==0,q+1])* length(matriz_Y[matriz_Y[,TT+1]==0,q+1]))
+    F_inver_F_Y10_t6=qpois(F_Y10,lambda = mean(matriz_Y[matriz_Y[,TT+1]==0,q+2])* length(matriz_Y[matriz_Y[,TT+1]==0,q+2]))
     
     
     ##########################################################
     #####################RESULTADOS###########################
     ##########################################################
-    tau_4=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q]) #resultados populacionais
-    tau_5=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+1])
-    tau_6=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2])-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+2])
+    tau_4=log(mean((matriz_Y[matriz_Y[,TT+1]==1,q])))-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q]) #resultados populacionais
+    tau_5=log(mean((matriz_Y[matriz_Y[,TT+1]==1,q+1])))-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+1])
+    tau_6=log(mean((matriz_Y[matriz_Y[,TT+1]==1,q+2])))-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+2])
     
-    tau_4_hat=log(mean((matriz_Y[matriz_Y[,TT+1]==1,q])))/log(mean((F_inver_F_Y10_t4))))
-    tau_5_hat=log(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,q+1])))/exp(mean(log(F_inver_F_Y10_t5))))
-    tau_6_hat=log(exp(mean(log(matriz_Y[matriz_Y[,TT+1]==1,q+2])))/exp(mean(log(F_inver_F_Y10_t6))))
+    tau_4_hat=log(mean((matriz_Y[matriz_Y[,TT+1]==1,q])))-log(mean(F_inver_F_Y10_t4)/length(matriz_Y[matriz_Y[,TT+1]==1,q]))
+    tau_5_hat=log(mean((matriz_Y[matriz_Y[,TT+1]==1,q+1])))-log(mean(F_inver_F_Y10_t5)/length(matriz_Y[matriz_Y[,TT+1]==1,q+1]))
+    tau_6_hat=log(mean((matriz_Y[matriz_Y[,TT+1]==1,q+2])))-log(mean(F_inver_F_Y10_t6)/length(matriz_Y[matriz_Y[,TT+1]==1,q+2]))
+
+    gamma_4=mean((matriz_Y[matriz_Y[,TT+1]==1,q]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q]))
+    gamma_5=mean((matriz_Y[matriz_Y[,TT+1]==1,q+1]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+1]))
+    gamma_6=mean((matriz_Y[matriz_Y[,TT+1]==1,q+2]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+2]))
+
+    gamma4_hat=mean((matriz_Y[matriz_Y[,TT+1]==1,q]))-mean(F_inver_F_Y10_t4)/length(matriz_Y[matriz_Y[,TT+1]==1,q])
+    gamma5_hat=mean((matriz_Y[matriz_Y[,TT+1]==1,q+1]))-mean(F_inver_F_Y10_t5)/length(matriz_Y[matriz_Y[,TT+1]==1,q+1])
+    gamma6_hat=mean((matriz_Y[matriz_Y[,TT+1]==1,q+2]))-mean(F_inver_F_Y10_t6)/length(matriz_Y[matriz_Y[,TT+1]==1,q+2])
     
-    gamma_4=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q]+var(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q])/2))-exp(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]+var(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1])/2))
-    gamma_5=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1]+var(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1])/2))-exp(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]+var(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1])/2))
-    gamma_6=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2]+var(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2])/2))-exp(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]+var(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1])/2))
+    kappa_4=sum((matriz_Y[matriz_Y[,TT+1]==1,q]))-(sum(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q])))
+    kappa_5=sum((matriz_Y[matriz_Y[,TT+1]==1,q+1]))-(sum(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+1])))
+    kappa_6=sum((matriz_Y[matriz_Y[,TT+1]==1,q+2]))-(sum(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q+2])))
     
-    
-    gamma4_hat=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q]+var(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q])/2))-mean(F_inver_F_Y10_t4)
-    gamma5_hat=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1]+var(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1])/2))-mean(F_inver_F_Y10_t5)
-    gamma6_hat=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2]+var(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2])/2))-mean(F_inver_F_Y10_t6)
-    
-    kappa_4=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]))
-    kappa_5=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]))
-    kappa_6=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2]))-mean(exp(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,q-1]))
-    
-    
-    kappa4_hat=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q]))-mean(F_inver_F_Y10_t4)
-    kappa5_hat=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+1]))-mean(F_inver_F_Y10_t5)
-    kappa6_hat=mean(exp(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q+2]))-mean(F_inver_F_Y10_t6)
+    kappa4_hat=sum((matriz_Y[matriz_Y[,TT+1]==1,q]))-(F_inver_F_Y10_t4)
+    kappa5_hat=sum((matriz_Y[matriz_Y[,TT+1]==1,q+1]))-(F_inver_F_Y10_t5)
+    kappa6_hat=sum((matriz_Y[matriz_Y[,TT+1]==1,q+2]))-(F_inver_F_Y10_t6)
     
     matriz_resultados[p,1]=tau_4
     matriz_resultados[p,2]=tau_4_hat
