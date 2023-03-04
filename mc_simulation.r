@@ -3,9 +3,11 @@
 ##############################################
 #install.packages("devtools")
 library(devtools)
+#install.packages("moments")
+library(moments)
 
 #source_url("https://github.com/wendtvi/dissertation_code/blob/main/continous_nonlinear.r?raw=TRUE")
-
+N=1000
 matriz_resultados=mc_function(N=1000)
 vetor_mc_resultados_vies=vector()
 vetor_mc_resultados_sd=vector()
@@ -29,7 +31,7 @@ for (k in seq(1,ncol(matriz_resultados)/3,2)){
   c=c+1
   vetor_mc_resultados_vies[c]=mean(matriz_resultados[,k])-mean(matriz_resultados[,k+1])
   vetor_mc_resultados_sd_vies[c]=mean(abs(matriz_resultados[,k]-(matriz_resultados[,k+1])))
-  vetor_mc_resultados_sd[c]=sd(matriz_resultados[,k+1])
+  vetor_mc_resultados_sd[c]=var(matriz_resultados[,k+1])*sqrt((kurtosis(matriz_resultados[,k+1])-1)/N)
   vetor_mc_resultados_media_pop[c]=mean(matriz_resultados[,k])
   vetor_mc_resultados_media_est[c]=mean(matriz_resultados[,k+1])
 }
@@ -39,7 +41,7 @@ for (k in seq(ncol(matriz_resultados)/3+1,ncol(matriz_resultados)*2/3,2)){
   c=c+1
   xvetor_mc_resultados_vies[c]=mean(matriz_resultados[,k])-mean(matriz_resultados[,k+1])
   xvetor_mc_resultados_sd_vies[c]=mean(abs(matriz_resultados[,k]-(matriz_resultados[,k+1])))
-  xvetor_mc_resultados_sd[c]=sd(matriz_resultados[,k+1])
+  xvetor_mc_resultados_sd[c]=var(matriz_resultados[,k+1])*sqrt((kurtosis(matriz_resultados[,k+1])-1)/N)
   xvetor_mc_resultados_media_pop[c]=mean(matriz_resultados[,k])
   xvetor_mc_resultados_media_est[c]=mean(matriz_resultados[,k+1])
 }
@@ -50,7 +52,7 @@ for (k in seq(ncol(matriz_resultados)*2/3+1,ncol(matriz_resultados),2)){
   c=c+1
   yvetor_mc_resultados_vies[c]=mean(matriz_resultados[,k])-mean(matriz_resultados[,k+1])
   yvetor_mc_resultados_sd_vies[c]=mean(abs(matriz_resultados[,k]-(matriz_resultados[,k+1])))
-  yvetor_mc_resultados_sd[c]=sd(matriz_resultados[,k+1])
+  yvetor_mc_resultados_sd[c]=var(matriz_resultados[,k+1])*sqrt((kurtosis(matriz_resultados[,k+1])-1)/N)
   yvetor_mc_resultados_media_pop[c]=mean(matriz_resultados[,k])
   yvetor_mc_resultados_media_est[c]=mean(matriz_resultados[,k+1])
 }
