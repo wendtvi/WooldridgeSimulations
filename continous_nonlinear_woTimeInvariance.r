@@ -34,8 +34,8 @@ mc_function=function(N){
     matriz_estado_naotratamento=matrix(NA,nrow = n1,ncol = TT+1)
     matriz_estado_naotratamento[,TT+1]=t(D)
     for (k in 1:TT){
-      if (k<q) matriz_estado_naotratamento[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)+ct_0>0)
-      if (k>=q) matriz_estado_naotratamento[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)+ct_0>0)
+      if (k<q) matriz_estado_naotratamento[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,1,3)+ct_0>0)
+      if (k>=q) matriz_estado_naotratamento[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,1,3)+ct_0>0)
     }
     
     #Gerando matriz de dados latentes.
@@ -43,11 +43,11 @@ mc_function=function(N){
     matriz_X_estrela[,TT+1]=t(D)
     for (k in 1:ncol(matriz_X_estrela)-1){
       matriz_X_estrela[,k]=matriz_estado_naotratamento[,k]
-      if (k<q) matriz_X_estrela[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,1.81)+ct_inf>0)
+      if (k<q) matriz_X_estrela[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,1,3)+ct_inf>0)
       for (i in 1:nrow(matriz_X_estrela)){
-        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+rnorm(1,0,1.81)+ct_inf[i]>0)
-        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+rnorm(1,0,1.81)+ct_inf[i]>0)
-        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+0.3*f6[i]+rnorm(1,0,1.81)+ct_inf[i]>0)
+        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+rnorm(1,0,1)+ct_inf[i]>0)
+        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+rnorm(1,0,2)+ct_inf[i]>0)
+        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+0.3*f6[i]+rnorm(1,0,3)+ct_inf[i]>0)
       }
     }
     
@@ -55,21 +55,23 @@ mc_function=function(N){
     ####################################################
     ##GERANDO VAR DO ESTADO NAO TRATADO#################
     ####################################################
-    #GERANDO VARIAVEL X
-    X_vetor_0_0=vector()
-    X_vetor_1_0=vector()
-    for (k in 1:TT){
-      X_vetor_0_0[k]=mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==0,k])
-      X_vetor_1_0[k]=mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,k])
-    }
-    
     #GERANDO VARIAVEL X^*
     X_estrela_vetor_0_0=vector()
     X_estrela_vetor_1_0=vector()
     for (k in 1:TT){
-      X_estrela_vetor_0_0[k]=X_vetor_0_0[k]/(1-X_vetor_0_0[k])
-      X_estrela_vetor_1_0[k]=X_vetor_1_0[k]/(1-X_vetor_1_0[k])
+      X_estrela_vetor_0_0[k]=mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==0,k])/(1-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==0,k]))
+      X_estrela_vetor_1_0[k]=mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,k])/(1-mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,k]))
     }
+    
+    #GERANDO VARIAVEL X
+    X_vetor_0_0=vector()
+    X_vetor_1_0=vector()
+    for (k in 1:TT){
+      X_vetor_0_0[k]= X_estrela_vetor_0_0[k]/(1+ X_estrela_vetor_0_0[k])
+      X_vetor_1_0[k]=X_estrela_vetor_1_0[k]/(1+X_estrela_vetor_1_0[k])
+    }
+    
+
     
     #GERANDO VARIAVEL Y
     Y_vetor_0_0=vector()
@@ -85,21 +87,23 @@ mc_function=function(N){
     ####################################################
     ##GERANDO VAR DO ESTADO TRATADO#####################
     ####################################################
-    #GERANDO VARIAVEL X
-    X_vetor_0_inf=vector()
-    X_vetor_1_inf=vector()
-    for (k in 1:TT){
-      X_vetor_0_inf[k]=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,k])
-      X_vetor_1_inf[k]=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,k])
-    }
-    
     #GERANDO VARIAVEL X^*
     X_estrela_vetor_0_inf=vector()
     X_estrela_vetor_1_inf=vector()
     for (k in 1:TT){
-      X_estrela_vetor_0_inf[k]=X_vetor_0_inf[k]/(1-X_vetor_0_inf[k])
-      X_estrela_vetor_1_inf[k]=X_vetor_1_inf[k]/(1-X_vetor_1_inf[k])
+      X_estrela_vetor_0_inf[k]=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,k])/(1-mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,k]))
+      X_estrela_vetor_1_inf[k]=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,k])/(1-mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,k]))
     }
+    
+    
+    #GERANDO VARIAVEL X
+    X_vetor_0_inf=vector()
+    X_vetor_1_inf=vector()
+    for (k in 1:TT){
+      X_vetor_0_inf[k]=X_estrela_vetor_0_inf[k]/(1+X_estrela_vetor_0_inf[k])
+      X_vetor_1_inf[k]=X_estrela_vetor_1_inf[k]/(1+X_estrela_vetor_1_inf[k])
+    }
+    
     
     #GERANDO VARIAVEL Y
     Y_vetor_0_inf=vector()
@@ -109,7 +113,7 @@ mc_function=function(N){
       Y_vetor_1_inf[k]=sum(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,k])
     }
     
-
+    
     ##########################################################
     #####################ESTIMADORES##########################
     ##########################################################
@@ -135,7 +139,7 @@ mc_function=function(N){
     tau_5_hat=X_estrela_vetor_1_inf[q+1]-((F_inver_F_Y10_t5/(n1*pD))/(1-(F_inver_F_Y10_t5/(n1*pD))))
     tau_6_hat=X_estrela_vetor_1_inf[q+2]-((F_inver_F_Y10_t6/(n1*pD))/(1-(F_inver_F_Y10_t6/(n1*pD))))
     
-
+    
     
     gamma_4=X_vetor_1_inf[q]-X_vetor_1_0[q]
     gamma_5=X_vetor_1_inf[q+1]-X_vetor_1_0[q+1]
@@ -153,7 +157,7 @@ mc_function=function(N){
     kappa4_hat=Y_vetor_1_inf[q]-F_inver_F_Y10_t4
     kappa5_hat=Y_vetor_1_inf[q+1]-F_inver_F_Y10_t5
     kappa6_hat=Y_vetor_1_inf[q+2]-F_inver_F_Y10_t6
-  
+    
     
     matriz_resultados[p,1]=tau_4
     matriz_resultados[p,2]=tau_4_hat
