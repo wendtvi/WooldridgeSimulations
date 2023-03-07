@@ -1,5 +1,5 @@
 mc_function=function(N){
-  n1=40
+  n1=500
   TT=6
   q=4
   matriz_resultados=matrix(NA, ncol = (2*((TT-q+1)*2)),nrow = N)
@@ -36,10 +36,10 @@ mc_function=function(N){
     matriz_estado_naotratamento[,TT+1]=t(D)
     for (k in 1:TT){
       for(i in 1:nrow(matriz_estado_naotratamento)){
-        if (k<q && matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rbeta(1,2,2)+ct_0[i])
-        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k<q && matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
+        if (k<q && matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,5,1)+ct_0[i])
+        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,5,1)+ct_0[i])
+        if (k<q && matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,5,1)+ct_0[i])
+        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,5,1)+ct_0[i])
         
       }
     }
@@ -49,13 +49,13 @@ mc_function=function(N){
     matriz_X_estrela[,TT+1]=t(D)
     for (k in 1:ncol(matriz_X_estrela)-1){
       for (i in 1:nrow(matriz_X_estrela)){
-        if (k<q && matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rbeta(1,2,2)+ct_0[i])
-        if (k>=q&& matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k<q && matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k>=q&& matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+rnorm(1,0,10)+ct_inf[i])
-        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+rnorm(1,0,10)+ct_inf[i])
-        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+0.3*f6[i]+rnorm(1,0,10)+ct_inf[i])
+        if (k<q && matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,5,1)+ct_0[i])
+        if (k>=q&& matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,5,1)+ct_0[i])
+        if (k<q && matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,5,1)+ct_0[i])
+        if (k>=q&& matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,5,1)+ct_0[i])
+        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+rnorm(1,5,1)+ct_inf[i])
+        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+rnorm(1,5,1)+ct_inf[i])
+        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+0.3*f6[i]+rnorm(1,5,1)+ct_inf[i])
       }
     }
     
@@ -68,7 +68,7 @@ mc_function=function(N){
     X_estrela_vetor_1_0=vector()
     for (k in 1:TT){
       X_estrela_vetor_0_0[k]=exp(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==0,k]))
-      X_estrela_vetor_1_0[k]=exp(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==0,k]))
+      X_estrela_vetor_1_0[k]=exp(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,k]))
     }
     
     #GERANDO VARIAVEL X
@@ -135,9 +135,9 @@ mc_function=function(N){
     tau_5=X_estrela_vetor_1_inf[q+1]-X_estrela_vetor_1_0[q+1]
     tau_6=X_estrela_vetor_1_inf[q+2]-X_estrela_vetor_1_0[q+2]
     
-    tau_4_hat=X_estrela_vetor_1_inf[q]-exp((G_Ybar_01_t4-G_Ybar_00_t3+G_Ybar_10_t3)/(1-(G_Ybar_01_t4-G_Ybar_00_t3+G_Ybar_10_t3)))
-    tau_5_hat=X_estrela_vetor_1_inf[q+1]-exp((G_Ybar_01_t5-G_Ybar_00_t3+G_Ybar_10_t3)/(1-(G_Ybar_01_t5-G_Ybar_00_t3+G_Ybar_10_t3)))
-    tau_6_hat=X_estrela_vetor_1_inf[q+2]-exp((G_Ybar_01_t6-G_Ybar_00_t3+G_Ybar_10_t3)/(1-(G_Ybar_01_t6-G_Ybar_00_t3+G_Ybar_10_t3)))
+    tau_4_hat=X_estrela_vetor_1_inf[q]-exp(G_Ybar_01_t4-G_Ybar_00_t3+G_Ybar_10_t3)
+    tau_5_hat=X_estrela_vetor_1_inf[q+1]-exp((G_Ybar_01_t5-G_Ybar_00_t3+G_Ybar_10_t3))
+    tau_6_hat=X_estrela_vetor_1_inf[q+2]-exp((G_Ybar_01_t6-G_Ybar_00_t3+G_Ybar_10_t3))
     
     
     gamma_4=X_vetor_1_inf[q]-X_vetor_1_0[q]
@@ -170,11 +170,11 @@ mc_function=function(N){
     ##########################################################
     Y10=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q-1]) #variável resposta observada para grupo dos tratados no período pré tratamento t=3
     #Suponho que sei que variável latente segue distribuição logistica com parâmetros 0,1
-    F_Y10=pnorm((Y10), mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]),sd = sd(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]))
+    F_Y10=pnorm((Y10), mean =mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]) ,sd = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]))
     
-    F_inver_F_Y10_t4=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]),sd = sd(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]))
-    F_inver_F_Y10_t5=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]),sd = sd(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]))
-    F_inver_F_Y10_t6=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]),sd = sd(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]))
+    F_inver_F_Y10_t4=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]), sd=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]))
+    F_inver_F_Y10_t5=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]), sd=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]))
+    F_inver_F_Y10_t6=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]), sd=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]))
     
     
     ##########################################################
@@ -184,17 +184,17 @@ mc_function=function(N){
     tau_5=X_estrela_vetor_1_inf[q+1]-X_estrela_vetor_1_0[q+1]
     tau_6=X_estrela_vetor_1_inf[q+2]-X_estrela_vetor_1_0[q+2]
     
-    tau_4_hat=X_estrela_vetor_1_inf[q]-log((F_inver_F_Y10_t4/(n1*pD))/(1-(F_inver_F_Y10_t4/(n1*pD))))
-    tau_5_hat=X_estrela_vetor_1_inf[q+1]-log((F_inver_F_Y10_t5/(n1*pD))/(1-(F_inver_F_Y10_t5/(n1*pD))))
-    tau_6_hat=X_estrela_vetor_1_inf[q+2]-log((F_inver_F_Y10_t6/(n1*pD))/(1-(F_inver_F_Y10_t6/(n1*pD))))
+    tau_4_hat=X_estrela_vetor_1_inf[q]-exp((F_inver_F_Y10_t4))
+    tau_5_hat=X_estrela_vetor_1_inf[q+1]-exp((F_inver_F_Y10_t5))
+    tau_6_hat=X_estrela_vetor_1_inf[q+2]-exp((F_inver_F_Y10_t6))
     
     gamma_4=X_vetor_1_inf[q]-X_vetor_1_0[q]
     gamma_5=X_vetor_1_inf[q+1]-X_vetor_1_0[q+1]
     gamma_6=X_vetor_1_inf[q+2]-X_vetor_1_0[q+2]
     
-    gamma4_hat=X_vetor_1_inf[q]-(F_inver_F_Y10_t4/(n1*pD))
-    gamma5_hat=X_vetor_1_inf[q+1]-(F_inver_F_Y10_t5/(n1*pD))
-    gamma6_hat=X_vetor_1_inf[q+2]-(F_inver_F_Y10_t6/(n1*pD))
+    gamma4_hat=X_vetor_1_inf[q]-(F_inver_F_Y10_t4)
+    gamma5_hat=X_vetor_1_inf[q+1]-(F_inver_F_Y10_t5)
+    gamma6_hat=X_vetor_1_inf[q+2]-(F_inver_F_Y10_t6)
     
     
     matriz_resultados[p,1]=tau_4
