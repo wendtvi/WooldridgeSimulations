@@ -170,11 +170,11 @@ mc_function=function(N){
     ##########################################################
     Y10=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q-1]) #variável resposta observada para grupo dos tratados no período pré tratamento t=3
     #Suponho que sei que variável latente segue distribuição logistica com parâmetros 0,1
-    F_Y10=pnorm((Y10), mean =mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]) ,sd = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]))
+    F_Y10=pnorm((Y10), mean =5 ,sd = 1)
     
-    F_inver_F_Y10_t4=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]), sd=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]))
-    F_inver_F_Y10_t5=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]), sd=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]))
-    F_inver_F_Y10_t6=qnorm(F_Y10, mean = mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]), sd=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]))
+    F_inver_F_Y10_t4=qnorm(F_Y10, mean =5 ,sd = 1)
+    F_inver_F_Y10_t5=qnorm(F_Y10,mean =5 ,sd = 1)
+    F_inver_F_Y10_t6=qnorm(F_Y10,mean =5 ,sd = 1)
     
     
     ##########################################################
