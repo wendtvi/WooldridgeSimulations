@@ -1,5 +1,5 @@
 mc_function=function(N){
-  n1=100
+  n1=40
   TT=6
   q=4
   matriz_resultados=matrix(NA, ncol = (3*((TT-q+1)*2)),nrow = N)
@@ -25,8 +25,8 @@ mc_function=function(N){
     pD=sum(D)/length(D) #Incidência de tratamento na população
     
     
-    ct_0=rlogis(n1,0,1) #erro idiossincrático estado zero
-    ct_inf=rlogis(n1,0,1)#erro idiossincrático estado inf
+    ct_0=rnorm(n1,0,1)#erro idiossincrático estado zero
+    ct_inf=rnorm(n1,0,1)#erro idiossincrático estado inf
     
     #Modelo de diferenças em diferença para cada cohort (01 primero é grupo e segundo é tempo: neste caso é grupo de controle no período pós trat)
     f5=rep(1,n1)*D
@@ -35,20 +35,27 @@ mc_function=function(N){
     matriz_estado_naotratamento=matrix(NA,nrow = n1,ncol = TT+1)
     matriz_estado_naotratamento[,TT+1]=t(D)
     for (k in 1:TT){
-      if (k<q) matriz_estado_naotratamento[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,3)+ct_0>0)
-      if (k>=q) matriz_estado_naotratamento[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,3)+ct_0>0)
+      for(i in 1:nrow(matriz_estado_naotratamento)){
+        if (k<q && matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rbeta(1,2,2)+ct_0[i]>0)
+        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i]>0)
+        if (k<q && matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i]>0)
+        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i]>0)
+        
+      }
     }
     
     #Gerando matriz de dados latentes.
     matriz_X_estrela=matrix(NA, ncol = TT+1,nrow = n1)
     matriz_X_estrela[,TT+1]=t(D)
     for (k in 1:ncol(matriz_X_estrela)-1){
-      matriz_X_estrela[,k]=matriz_estado_naotratamento[,k]
-      if (k<q) matriz_X_estrela[,k]=as.numeric(-(Z_cov_mean-1)/2-2*D+(Z_cov_mean-1)*D/4+rnorm(n1,0,3)+ct_inf>0)
       for (i in 1:nrow(matriz_X_estrela)){
-        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+rnorm(1,1,5)+ct_inf[i]>0)
-        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+rnorm(1,1,5)+ct_inf[i]>0)
-        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+0.3*f6[i]+rnorm(1,1,5)+ct_inf[i]>0)
+        if (k<q && matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rbeta(1,2,2)+ct_0[i]>0)
+        if (k>=q&& matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i]>0)
+        if (k<q && matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i]>0)
+        if (k>=q&& matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i]>0)
+        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+rnorm(1,0,10)+ct_inf[i]>0)
+        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+rnorm(1,0,10)+ct_inf[i]>0)
+        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+0.3*f6[i]+rnorm(1,0,10)+ct_inf[i]>0)
       }
     }
     
@@ -146,7 +153,7 @@ mc_function=function(N){
     tau_4_hat=X_estrela_vetor_1_inf[q]-log((G_Ybar_01_t4-G_Ybar_00_t3+G_Ybar_10_t3)/(1-(G_Ybar_01_t4-G_Ybar_00_t3+G_Ybar_10_t3)))
     tau_5_hat=X_estrela_vetor_1_inf[q+1]-log((G_Ybar_01_t5-G_Ybar_00_t3+G_Ybar_10_t3)/(1-(G_Ybar_01_t5-G_Ybar_00_t3+G_Ybar_10_t3)))
     tau_6_hat=X_estrela_vetor_1_inf[q+2]-log((G_Ybar_01_t6-G_Ybar_00_t3+G_Ybar_10_t3)/(1-(G_Ybar_01_t6-G_Ybar_00_t3+G_Ybar_10_t3)))
-  
+    
     
     gamma_4=X_vetor_1_inf[q]-X_vetor_1_0[q]
     gamma_5=X_vetor_1_inf[q+1]-X_vetor_1_0[q+1]
@@ -190,14 +197,13 @@ mc_function=function(N){
     ##########################################################
     #####################ESTIMADORES##########################
     ##########################################################
-    Y10= Y_vetor_1_inf[q-1] #variável resposta observada para grupo dos tratados no período pré tratamento t=3
+    Y10=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q-1]) #variável resposta observada para grupo dos tratados no período pré tratamento t=3
     #Suponho que sei que variável latente segue distribuição logistica com parâmetros 0,1
-    F_Y10=pbinom((Y10), size=n1*(1-pD), prob=X_vetor_0_inf[q-1])
+    F_Y10=pbinom((Y10), size=n1*(1-pD), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]))
     
-    #hist(F_Y10)
-    F_inver_F_Y10_t4=qbinom(F_Y10,size=(n1*(1-pD)), prob = X_vetor_0_inf[q])
-    F_inver_F_Y10_t5=qbinom(F_Y10,size=(n1*(1-pD)), prob = X_vetor_0_inf[q+1])
-    F_inver_F_Y10_t6=qbinom(F_Y10,size=(n1*(1-pD)), prob = X_vetor_0_inf[q+2])
+    F_inver_F_Y10_t4=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]))
+    F_inver_F_Y10_t5=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]))
+    F_inver_F_Y10_t6=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]))
     
     
     ##########################################################
