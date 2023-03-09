@@ -26,6 +26,13 @@ WOOLxvetor_mc_resultados_media_est=vector()
 WOOLxvetor_mc_resultados_sd_vies=vector()
 WOOLxvetor_mc_resultados_mcsd=vector()
 
+WOOLyvetor_mc_resultados_vies=vector()
+WOOLyvetor_mc_resultados_sd=vector()
+WOOLyvetor_mc_resultados_media_pop=vector()
+WOOLyvetor_mc_resultados_media_est=vector()
+WOOLyvetor_mc_resultados_sd_vies=vector()
+WOOLyvetor_mc_resultados_mcsd=vector()
+
 c=0
 for (k in seq(1,ncol(WOOLmatriz_resultados)/2,2)){
   c=c+1
@@ -51,6 +58,11 @@ for (k in seq(ncol(WOOLmatriz_resultados)/2+1,ncol(WOOLmatriz_resultados),2)){
 
 
 
+par(mfrow=c(1,2))
+hist(WOOLmatriz_resultados[,8],main="Distribuição estimador Wooldridge t=4 e sd 2 no modelo DiD")
+hist(WOOLmatriz_resultados[,8],main="Distribuição estimador CIC t=4 e sd 2 no modelo DiD")
+
+
 vetor_mc_resultados_vies=vector()
 vetor_mc_resultados_sd=vector()
 vetor_mc_resultados_media_pop=vector()
@@ -64,6 +76,8 @@ xvetor_mc_resultados_media_pop=vector()
 xvetor_mc_resultados_media_est=vector()
 xvetor_mc_resultados_sd_vies=vector()
 xvetor_mc_resultados_mcsd=vector()
+
+
 c=0
 for (k in seq(1,ncol(matriz_resultados)/2,2)){
   c=c+1
