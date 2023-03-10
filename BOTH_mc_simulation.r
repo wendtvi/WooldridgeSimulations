@@ -26,12 +26,6 @@ WOOLxvetor_mc_resultados_media_est=vector()
 WOOLxvetor_mc_resultados_sd_vies=vector()
 WOOLxvetor_mc_resultados_mcsd=vector()
 
-WOOLyvetor_mc_resultados_vies=vector()
-WOOLyvetor_mc_resultados_sd=vector()
-WOOLyvetor_mc_resultados_media_pop=vector()
-WOOLyvetor_mc_resultados_media_est=vector()
-WOOLyvetor_mc_resultados_sd_vies=vector()
-WOOLyvetor_mc_resultados_mcsd=vector()
 
 c=0
 for (k in seq(1,ncol(WOOLmatriz_resultados)/2,2)){
