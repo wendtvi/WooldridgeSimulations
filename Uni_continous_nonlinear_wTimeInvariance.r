@@ -1,5 +1,5 @@
 mc_function=function(N){
-  n1=500
+  n1=50
   TT=6
   q=4
   matriz_resultados=matrix(NA, ncol = (2*((TT-q+1)*2)),nrow = N)
@@ -25,21 +25,35 @@ mc_function=function(N){
     pD=sum(D)/length(D) #Incidência de tratamento na população
     
     
-    ct_0=rnorm(n1,0,1)#erro idiossincrático estado zero
-    ct_inf=rnorm(n1,0,1)#erro idiossincrático estado inf
+    #ct_0_controle_pre=+rbeta(n1,0.00001,.5)#erro idiossincrático estado zero
+    #ct_0_controle_pos=+rbeta(n1,0.00001,1)#erro idiossincrático estado zero
+    #ct_inf_controle_pre=+rbeta(n1,0.00001,.5)#erro idiossincrático estado inf
+    #ct_inf_controle_pos=+rbeta(n1,.00001,1)#erro idiossincrático estado inf
+    #ct_0_trat_pre=+rbeta(n1,0.00001,.5)#erro idiossincrático estado zero
+    #ct_0_trat_pos=rbeta(n1,0.00001,1)#erro idiossincrático estado zero
+    #ct_inf_trat_pre=+rbeta(n1,0.00001,.5)#erro idiossincrático estado inf
+    #ct_inf_trat_pos=+rbeta(n1,0.00001,1)#erro idiossincrático estado inf
+    
+    ct_0_controle_pre=rep(0,n1)
+    ct_0_controle_pos=rep(0,n1)
+    ct_inf_controle_pre=rep(0,n1)
+    ct_inf_controle_pos=rep(0,n1)
+    ct_0_trat_pre=rep(0,n1)
+    ct_0_trat_pos=rep(0,n1)
+    ct_inf_trat_pre=rep(0,n1)
+    ct_inf_trat_pos=rep(0,n1)
     
     #Modelo de diferenças em diferença para cada cohort (01 primero é grupo e segundo é tempo: neste caso é grupo de controle no período pós trat)
     f5=rep(1,n1)*D
     f6=rep(1,n1)*D
-    
     matriz_estado_naotratamento=matrix(NA,nrow = n1,ncol = TT+1)
     matriz_estado_naotratamento[,TT+1]=t(D)
     for (k in 1:TT){
       for(i in 1:nrow(matriz_estado_naotratamento)){
-        if (k<q && matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,2)+ct_0[i])
-        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k<q && matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
+        if (k<q && matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0_controle_pre[i])
+        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==0) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0_controle_pos[i])
+        if (k<q && matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0_trat_pre[i])
+        if (k>=q&& matriz_estado_naotratamento[i,TT+1]==1) matriz_estado_naotratamento[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0_trat_pos[i])
         
       }
     }
@@ -49,16 +63,15 @@ mc_function=function(N){
     matriz_X_estrela[,TT+1]=t(D)
     for (k in 1:ncol(matriz_X_estrela)-1){
       for (i in 1:nrow(matriz_X_estrela)){
-        if (k<q && matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,2)+ct_0[i])
-        if (k>=q&& matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k<q && matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k>=q&& matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0[i])
-        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+rnorm(1,0,1)+ct_inf[i])
-        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+rnorm(1,0,1)+ct_inf[i])
-        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+0.3*f6[i]+rnorm(1,0,1)+ct_inf[i])
+        if (k<q && matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0_controle_pre[i])
+        if (k>=q&& matriz_X_estrela[i,TT+1]==0) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0_controle_pos[i])
+        if (k<q && matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0_trat_pre[i])
+        if (k>=q&& matriz_X_estrela[i,TT+1]==1) matriz_X_estrela[i,k]=as.numeric(-(Z_cov_mean[i]-1)*5/2-2*D[i]+(Z_cov_mean[i]-1)*D[i]/4+rnorm(1,0,1)+ct_0_trat_pos[i])
+        if (k==4 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+rnorm(1,0,1)+ct_inf_trat_pos[i])
+        if (k==5 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+rnorm(1,0,1)+ct_inf_trat_pos[i])
+        if (k==6 && matriz_X_estrela[i,TT+1]==1)matriz_X_estrela[i,k]=as.numeric(0.5+(Z_cov_mean[i]-1)-2*D[i]+0.2*f5[i]+0.3*f6[i]+rnorm(1,0,1)+ct_inf_trat_pos[i])
       }
     }
-    
     
     ####################################################
     ##GERANDO VAR DO ESTADO NAO TRATADO#################
