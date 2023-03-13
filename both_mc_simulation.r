@@ -135,7 +135,7 @@ for (k in seq(ncol(matriz_resultados)*2/3+1,ncol(matriz_resultados),2)){
 ######################MEAN SQUARED ERROR###########################
 ###################################################################
 MSE_woold=WOOLxvetor_mc_resultados_vies^2+WOOLxvetor_mc_resultados_sd^2
-CIC_woold=xvetor_mc_resultados_vies^2+xvetor_mc_resultados_sd^2
+MSE_cic=xvetor_mc_resultados_vies^2+xvetor_mc_resultados_sd^2
 MSE_woold
-CIC_woold
-MSE_woold/CIC_woold
+MSE_cic
+MSE_woold/MSE_cic
