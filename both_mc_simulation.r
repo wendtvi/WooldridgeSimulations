@@ -33,6 +33,8 @@ WOOLyvetor_mc_resultados_media_est=vector()
 WOOLyvetor_mc_resultados_sd_vies=vector()
 WOOLyvetor_mc_resultados_mcsd=vector()
 
+simulation_residuals=matrix(0,nrow = N,ncol = 2)
+
 c=0
 for (k in seq(1,ncol(WOOLmatriz_resultados)/3,2)){
   c=c+1
@@ -53,6 +55,8 @@ for (k in seq(ncol(WOOLmatriz_resultados)/3+1,ncol(WOOLmatriz_resultados)*2/3,2)
   WOOLxvetor_mc_resultados_sd[c]=sd(WOOLmatriz_resultados[,k+1])
   WOOLxvetor_mc_resultados_media_pop[c]=mean(WOOLmatriz_resultados[,k])
   WOOLxvetor_mc_resultados_media_est[c]=mean(WOOLmatriz_resultados[,k+1])
+  if(simulation_residuals[1]!=0)simulation_residuals[1]=abs(WOOLxvetor_mc_resultados_vies[c]-simulation_residuals[1])
+  if(simulation_residuals[1]==0)simulation_residuals[1]=WOOLxvetor_mc_resultados_vies[c]
 }
 
 
@@ -66,11 +70,6 @@ for (k in seq(ncol(WOOLmatriz_resultados)*2/3+1,ncol(WOOLmatriz_resultados),2)){
   WOOLyvetor_mc_resultados_media_pop[c]=mean(WOOLmatriz_resultados[,k])
   WOOLyvetor_mc_resultados_media_est[c]=mean(WOOLmatriz_resultados[,k+1])
 }
-
-
-par(mfrow=c(1,2))
-hist(WOOLmatriz_resultados[,8],main="Distribuição estimador Wooldridge t=4 e sd 2 no modelo DiD")
-hist(WOOLmatriz_resultados[,8],main="Distribuição estimador CIC t=4 e sd 2 no modelo DiD")
 
 
 vetor_mc_resultados_vies=vector()
@@ -114,6 +113,8 @@ for (k in seq(ncol(matriz_resultados)/3+1,ncol(matriz_resultados)*2/3,2)){
   xvetor_mc_resultados_sd[c]=sd(matriz_resultados[,k+1])
   xvetor_mc_resultados_media_pop[c]=mean(matriz_resultados[,k])
   xvetor_mc_resultados_media_est[c]=mean(matriz_resultados[,k+1])
+  if(simulation_residuals[2]!=0)simulation_residuals[2]=abs(WOOLxvetor_mc_resultados_vies[c]-simulation_residuals[2])
+  if(simulation_residuals[2]==0)simulation_residuals[2]=WOOLxvetor_mc_resultados_vies[c]
 }
 
 
@@ -129,6 +130,12 @@ for (k in seq(ncol(matriz_resultados)*2/3+1,ncol(matriz_resultados),2)){
 }
 
 
-par(mfrow=c(1,2))
-hist(matriz_resultados[,8],main="Distribuição estimador Wooldridge t=4 e sd 2 no modelo DiD")
-hist(matriz_resultados[,8],main="Distribuição estimador CIC t=4 e sd 2 no modelo DiD")
+
+###################################################################
+######################MEAN SQUARED ERROR###########################
+###################################################################
+MSE_woold=WOOLxvetor_mc_resultados_vies^2+WOOLxvetor_mc_resultados_sd^2
+CIC_woold=xvetor_mc_resultados_vies^2+xvetor_mc_resultados_sd^2
+MSE_woold
+CIC_woold
+MSE_woold/CIC_woold
