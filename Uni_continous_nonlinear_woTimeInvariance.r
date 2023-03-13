@@ -80,16 +80,16 @@ mc_function=function(N){
     X_estrela_vetor_0_0=vector()
     X_estrela_vetor_1_0=vector()
     for (k in 1:TT){
-      X_estrela_vetor_0_0[k]=exp(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==0,k]))
-      X_estrela_vetor_1_0[k]=exp(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,k]))
+      X_estrela_vetor_0_0[k]=(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==0,k]))
+      X_estrela_vetor_1_0[k]=(mean(matriz_estado_naotratamento[matriz_estado_naotratamento[,TT+1]==1,k]))
     }
     
     #GERANDO VARIAVEL X
     X_vetor_0_0=vector()
     X_vetor_1_0=vector()
     for (k in 1:TT){
-      X_vetor_0_0[k]=log(X_estrela_vetor_0_0[k])
-      X_vetor_1_0[k]=log(X_estrela_vetor_1_0[k])
+      X_vetor_0_0[k]=exp(X_estrela_vetor_0_0[k])
+      X_vetor_1_0[k]=exp(X_estrela_vetor_1_0[k])
     }
     
     
@@ -102,8 +102,8 @@ mc_function=function(N){
     X_estrela_vetor_0_inf=vector()
     X_estrela_vetor_1_inf=vector()
     for (k in 1:TT){
-      X_estrela_vetor_0_inf[k]=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,k]))
-      X_estrela_vetor_1_inf[k]=exp(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,k]))
+      X_estrela_vetor_0_inf[k]=(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,k]))
+      X_estrela_vetor_1_inf[k]=(mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,k]))
     }
     
     
@@ -111,8 +111,8 @@ mc_function=function(N){
     X_vetor_0_inf=vector()
     X_vetor_1_inf=vector()
     for (k in 1:TT){
-      X_vetor_0_inf[k]=log(X_estrela_vetor_0_inf[k])
-      X_vetor_1_inf[k]=log(X_estrela_vetor_1_inf[k])
+      X_vetor_0_inf[k]=exp(X_estrela_vetor_0_inf[k])
+      X_vetor_1_inf[k]=exp(X_estrela_vetor_1_inf[k])
     }
     
     
@@ -130,15 +130,15 @@ mc_function=function(N){
     Ybar_01_t5=X_vetor_0_inf[q+1]
     Ybar_01_t6=X_vetor_0_inf[q+2]
     
-    G_Ybar_11_t4=log(X_estrela_vetor_1_inf[q])
-    G_Ybar_11_t5=log(X_estrela_vetor_1_inf[q+1])
-    G_Ybar_11_t6=log(X_estrela_vetor_1_inf[q+2])
+    G_Ybar_11_t4=exp(X_estrela_vetor_1_inf[q])
+    G_Ybar_11_t5=exp(X_estrela_vetor_1_inf[q+1])
+    G_Ybar_11_t6=exp(X_estrela_vetor_1_inf[q+2])
     
-    G_Ybar_10_t3=log(X_estrela_vetor_1_inf[q-1])
-    G_Ybar_00_t3=log(X_estrela_vetor_0_inf[q-1])
-    G_Ybar_01_t4=log(X_estrela_vetor_0_inf[q])
-    G_Ybar_01_t5=log(X_estrela_vetor_0_inf[q+1])
-    G_Ybar_01_t6=log(X_estrela_vetor_0_inf[q+2])
+    G_Ybar_10_t3=exp(X_estrela_vetor_1_inf[q-1])
+    G_Ybar_00_t3=exp(X_estrela_vetor_0_inf[q-1])
+    G_Ybar_01_t4=exp(X_estrela_vetor_0_inf[q])
+    G_Ybar_01_t5=exp(X_estrela_vetor_0_inf[q+1])
+    G_Ybar_01_t6=exp(X_estrela_vetor_0_inf[q+2])
     
     
     ##########################################################
@@ -148,9 +148,9 @@ mc_function=function(N){
     tau_5=X_estrela_vetor_1_inf[q+1]-X_estrela_vetor_1_0[q+1]
     tau_6=X_estrela_vetor_1_inf[q+2]-X_estrela_vetor_1_0[q+2]
     
-    tau_4_hat=X_estrela_vetor_1_inf[q]-exp(G_Ybar_01_t4-G_Ybar_00_t3+G_Ybar_10_t3)
-    tau_5_hat=X_estrela_vetor_1_inf[q+1]-exp((G_Ybar_01_t5-G_Ybar_00_t3+G_Ybar_10_t3))
-    tau_6_hat=X_estrela_vetor_1_inf[q+2]-exp((G_Ybar_01_t6-G_Ybar_00_t3+G_Ybar_10_t3))
+    tau_4_hat=X_estrela_vetor_1_inf[q]-log(G_Ybar_01_t4/G_Ybar_00_t3*G_Ybar_10_t3)
+    tau_5_hat=X_estrela_vetor_1_inf[q+1]-log((G_Ybar_01_t5/G_Ybar_00_t3*G_Ybar_10_t3))
+    tau_6_hat=X_estrela_vetor_1_inf[q+2]-log((G_Ybar_01_t6/G_Ybar_00_t3*G_Ybar_10_t3))
     
     
     gamma_4=X_vetor_1_inf[q]-X_vetor_1_0[q]
@@ -198,17 +198,17 @@ mc_function=function(N){
     tau_5=X_estrela_vetor_1_inf[q+1]-X_estrela_vetor_1_0[q+1]
     tau_6=X_estrela_vetor_1_inf[q+2]-X_estrela_vetor_1_0[q+2]
     
-    tau_4_hat=X_estrela_vetor_1_inf[q]-exp((F_inver_F_Y10_t4))
-    tau_5_hat=X_estrela_vetor_1_inf[q+1]-exp((F_inver_F_Y10_t5))
-    tau_6_hat=X_estrela_vetor_1_inf[q+2]-exp((F_inver_F_Y10_t6))
+    tau_4_hat=X_estrela_vetor_1_inf[q]-((F_inver_F_Y10_t4))
+    tau_5_hat=X_estrela_vetor_1_inf[q+1]-((F_inver_F_Y10_t5))
+    tau_6_hat=X_estrela_vetor_1_inf[q+2]-((F_inver_F_Y10_t6))
     
     gamma_4=X_vetor_1_inf[q]-X_vetor_1_0[q]
     gamma_5=X_vetor_1_inf[q+1]-X_vetor_1_0[q+1]
     gamma_6=X_vetor_1_inf[q+2]-X_vetor_1_0[q+2]
     
-    gamma4_hat=X_vetor_1_inf[q]-(F_inver_F_Y10_t4)
-    gamma5_hat=X_vetor_1_inf[q+1]-(F_inver_F_Y10_t5)
-    gamma6_hat=X_vetor_1_inf[q+2]-(F_inver_F_Y10_t6)
+    gamma4_hat=X_vetor_1_inf[q]-exp(F_inver_F_Y10_t4)
+    gamma5_hat=X_vetor_1_inf[q+1]-exp(F_inver_F_Y10_t5)
+    gamma6_hat=X_vetor_1_inf[q+2]-exp(F_inver_F_Y10_t6)
     
     
     matriz_resultados[p,1]=tau_4
