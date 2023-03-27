@@ -1,3 +1,4 @@
+
 mc_function=function(N){
   n1=500
   TT=6
@@ -21,7 +22,7 @@ mc_function=function(N){
     #Variável de tratamento
     V=rlogis(n1,0,1)
     D=vector()
-    D=rep(2,n1)+(Z_cov_mean-1)+V>0
+    D=rep(-0.5,n1)+(Z_cov_mean-1)+V>0
     pD=sum(D)/length(D) #Incidência de tratamento na população
     D=as.numeric(D)
     
@@ -213,13 +214,21 @@ mc_function=function(N){
     ##########################################################
     #####################ESTIMADORES##########################
     ##########################################################
-    Y10=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q-1]) #variável resposta observada para grupo dos tratados no período pré tratamento t=3
+    #Y10=sum(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q-1]) #variável resposta observada para grupo dos tratados no período pré tratamento t=3
     #Suponho que sei que variável latente segue distribuição logistica com parâmetros 0,1
-    F_Y10=pbinom((Y10), size=n1*(1-pD), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]))
+    #F_Y10=pbinom((Y10), size=n1*(1-pD), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1]))
+    #if(F_Y10<0.001)F_Y10=0.001
     
-    F_inver_F_Y10_t4=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]))
-    F_inver_F_Y10_t5=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]))
-    F_inver_F_Y10_t6=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]))
+    #F_inver_F_Y10_t4=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q]))
+    #F_inver_F_Y10_t5=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1]))
+    #F_inver_F_Y10_t6=qbinom(F_Y10,size=(n1*(1-pD)), prob=mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2]))
+    
+    F_inver_F_Y10_t4=-(n1*(1-pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1])+(n1*(1-pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q])+
+                      (n1*(pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q-1])
+    F_inver_F_Y10_t5=-(n1*(1-pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1])+(n1*(1-pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+1])+
+      (n1*(pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q-1])
+    F_inver_F_Y10_t6=-(n1*(1-pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q-1])+(n1*(1-pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==0,q+2])+
+      (n1*(pD))*mean(matriz_X_estrela[matriz_X_estrela[,TT+1]==1,q-1])
     
     
     ##########################################################
