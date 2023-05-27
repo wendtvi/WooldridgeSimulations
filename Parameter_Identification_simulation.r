@@ -1,4 +1,5 @@
 vector_treat_effect=vector()
+q_parameter=vector()
 for(k in 1:1000){
 TT=as.numeric(runif(500,0,1)>0.5)
 GG=as.numeric(runif(500,0,1)>0.5)
@@ -23,7 +24,11 @@ treat_effect=log(qlnorm(plnorm(mean(Y_10),meanlog = mean(X_10), sdlog = sd(X_10)
                     log(qlnorm(plnorm(mean(Y_10),meanlog = mean(X_10), sdlog = sd(X_10)),meanlog = mean(X_00), sdlog = sd(X_00))))
 
 vector_treat_effect[k]=treat_effect
+q_parameter[k]=log(qlnorm(plnorm(exp(treat_effect+1.2+0.3+0.7),meanlog = mean(X_11-1.2-0.3-0.7), sdlog = sd(X_11)), meanlog = mean(X_11-1.2-0.3-0.7),sdlog = sd(X_11)))-1.2-0.3-0.7
 }
 
-hist(vector_treat_effect)
+par(mfrow=c(1,2))
+hist(vector_treat_effect,main = "Delta_1 generated as in (1)",xlab = "Delta_1")
+hist(q_parameter,main = "Delta_1 generated as the inverse of (2)",xlab = "Delta_1")
+
 
